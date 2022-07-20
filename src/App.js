@@ -1,5 +1,4 @@
-import { Navbar, Product } from "./components";
-import RelatedProducts from "./components/RelatedProducts";
+import { Navbar, Product, RelatedProducts, Footer } from "./components";
 
 function App() {
   return (
@@ -10,6 +9,7 @@ function App() {
         <hr className="my-[45px]" />
         <RelatedProducts />
       </main>
+      <Footer />
     </>
   );
 }
