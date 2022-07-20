@@ -8,9 +8,9 @@ const Navbar = () => {
       </div>
 
       <ul className="ml-[55px]">
-        {navbarItems.map((item) => {
+        {navbarItems.map((item, i) => {
           return (
-            <li className="mr-[20px] inline  ">
+            <li className="mr-[20px] inline" key={i}>
               <a href="#">{item}</a>
             </li>
           );

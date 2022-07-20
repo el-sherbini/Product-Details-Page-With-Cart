@@ -2,8 +2,8 @@ const Product = () => {
   const categories = ["HOME", "FRESH VEGETABLES", "HERBS LEAVES", "PREPACKED"];
 
   return (
-    <section className="mx-[150px] mt-[70px] mb-[40px]">
-      <ui className="flex text-[15px]">
+    <section className="mx-[150px] mt-[70px]">
+      <ul className="flex text-[15px]">
         {categories.map((category, i) => {
           return (
             <li key={i} className="flex list-none font-semibold text-[#ED0182]">
@@ -17,7 +17,7 @@ const Product = () => {
           );
         })}
         <li className="list-none font-medium">Mafa Red Cabbage - 1Piece</li>
-      </ui>
+      </ul>
 
       <div className="mt-[65px] mb-[65px] flex">
         <img

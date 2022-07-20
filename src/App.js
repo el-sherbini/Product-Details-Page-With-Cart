@@ -1,4 +1,5 @@
 import { Navbar, Product } from "./components";
+import RelatedProducts from "./components/RelatedProducts";
 
 function App() {
   return (
@@ -6,7 +7,8 @@ function App() {
       <Navbar />
       <main>
         <Product />
-        <hr />
+        <hr className="my-[45px]" />
+        <RelatedProducts />
       </main>
     </>
   );
