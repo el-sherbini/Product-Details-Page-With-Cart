@@ -1,15 +1,43 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProductDetails } from "../store/productSlice";
+import { addToCart, updateProductQuantity } from "../store/productSlice";
+
+import toast, { Toaster } from "react-hot-toast";
 
 const Product = () => {
-  const { productName, productDescription, productImage, productQuantities } =
-    useSelector((state) => state.product);
+  const {
+    productId,
+    productName,
+    productDescription,
+    productImage,
+    productQuantities,
+    isAddClicked,
+    successMsg,
+    failureMsg,
+  } = useSelector((state) => state.product);
+
+  const selectRef = useRef();
   const dispatch = useDispatch();
 
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({ productId: productId, quantity: selectRef.current.value })
+    );
+
+    // dispatch(
+    //   updateProductQuantity({
+    //     itemId: 158,
+    //     quantity: selectRef.current.value,
+    //   })
+    // );
+  };
+
   useEffect(() => {
-    dispatch(getProductDetails());
-  }, []);
+    if (isAddClicked) {
+      if (successMsg !== "Validation Error") toast.success(successMsg);
+      else toast.error(failureMsg);
+    }
+  }, [isAddClicked]);
 
   return (
     <section className="mx-[150px] mt-[70px]">
@@ -47,12 +75,20 @@ const Product = () => {
                   : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}
               </p>
 
-              <button className="mt-[45px] h-[60px] w-[220px] rounded-[10px] bg-[#ED0182] text-[14px] text-white">
+              <button
+                onClick={handleAddToCart}
+                className="mt-[45px] h-[60px] w-[220px] rounded-[10px] bg-[#ED0182] text-[14px] text-white"
+              >
                 Add
               </button>
+
+              <Toaster />
             </div>
 
-            <select className=" ml-[70px]  h-[35px] w-[80px] rounded-[20px] bg-[#F3D5E6] p-1 text-center text-[16px] focus:outline-none">
+            <select
+              ref={selectRef}
+              className=" ml-[70px]  h-[35px] w-[80px] rounded-[20px] bg-[#F3D5E6] p-1 text-center text-[16px] focus:outline-none"
+            >
               {productQuantities.map((quantity) => (
                 <option key={quantity}>{quantity}</option>
               ))}

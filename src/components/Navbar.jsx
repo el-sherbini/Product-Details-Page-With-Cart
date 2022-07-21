@@ -1,5 +1,9 @@
+import { useSelector } from "react-redux";
+
 const Navbar = () => {
   const navbarItems = ["CATEGORIES", "Deals", "Recipes", "About"];
+
+  const { cartCount } = useSelector((state) => state.product);
 
   return (
     <nav className="flex h-[100px] w-full items-center bg-black text-white">
@@ -36,8 +40,8 @@ const Navbar = () => {
 
       <div className="relative mr-[40px]">
         <img src="./assets/cart.svg" alt="search" />
-        <span className="absolute top-[-10px] right-[-15px] h-[24px] w-[24px] rounded-full border-[3px] border-black bg-[#FF0000] text-center text-[12px]">
-          1
+        <span className="absolute top-[-10px] right-[-15px] h-[25px] w-[25px] rounded-full border-2 border-black bg-[#FF0000] text-center text-[14px]">
+          {cartCount}
         </span>
       </div>
 

@@ -10,7 +10,7 @@ function App() {
   const { isLoading } = useSelector((state) => state.product);
 
   useEffect(() => {
-    dispatch(getProductDetails());
+    dispatch(getProductDetails({ id: 10430 }));
   }, []);
 
   return (
