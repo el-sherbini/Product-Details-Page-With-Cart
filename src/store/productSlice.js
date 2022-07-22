@@ -61,33 +61,94 @@ export const updateProductQuantity = createAsyncThunk(
   }
 );
 
+export const removeProduct = createAsyncThunk(
+  "product/removeProduct",
+  async (args) => {
+    try {
+      return axios({
+        method: "post",
+        url: `${baseUrl}/cart/delete`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          itemId: args.itemId,
+        },
+      }).then((res) => res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 const initialState = {
   isLoading: true,
-  isAddClicked: false,
+  checkValidation: false,
+  isCartOpen: false,
 
   productId: null,
   productName: null,
+  productPrice: null,
   productDescription: null,
   productImage: null,
   productQuantities: null,
   relatedProducts: [],
 
+  cartItems: [],
+
   successMsg: null,
   failureMsg: null,
 
   cartCount: 0,
+  totalPrice: 0,
+  totalPriceBeforeDiscount: 0,
 };
 
 const productSlice = createSlice({
   name: "product",
   initialState,
-  extraReducers: {
-    [getProductDetails.pending]: (state, action) => {
-      console.log(action);
+  reducers: {
+    openCart: (state) => {
+      state.isCartOpen = true;
     },
+    CloseCart: (state) => {
+      state.isCartOpen = false;
+    },
+    increaseQuantity: (state, action) => {
+      state.cartItems.find((item) => item.itemId === action.payload).quantity++;
+    },
+    decreaseQuantity: (state, action) => {
+      state.cartItems.find((item) => item.itemId === action.payload).quantity--;
+    },
+    deleteProduct: (state, action) => {
+      state.cartItems = state.cartItems.filter(
+        (item) => item.itemId !== action.payload
+      );
+    },
+    getTotalQuantity: (state) => {
+      let total = 0;
+      state.cartItems.forEach((item) => {
+        total += +item.quantity;
+      });
+      state.cartCount = total;
+    },
+    getTotalPrice: (state) => {
+      let total = 0,
+        totalBeforeDiscount = 0;
+      state.cartItems.forEach((item) => {
+        total += +item.amount;
+        totalBeforeDiscount += +item.oldPrice * +item.quantity;
+      });
+
+      state.totalPrice = total;
+      state.totalPriceBeforeDiscount = totalBeforeDiscount;
+    },
+  },
+  extraReducers: {
     [getProductDetails.fulfilled]: (state, action) => {
       state.productId = action.payload.product.id;
       state.productName = action.payload.product.name;
+      state.productPrice = action.payload.product.finalPrice;
       state.productDescription = action.payload.product.description;
       state.productImage = action.payload.product.image;
       state.productQuantities = action.payload.product.quantities;
@@ -96,35 +157,24 @@ const productSlice = createSlice({
 
       state.isLoading = false;
     },
-    [getProductDetails.rejected]: (state, action) => {
-      console.log(action);
-
-      state.isLoading = false;
-    },
 
     [addToCart.pending]: (state, action) => {
-      console.log(action);
-
-      state.isAddClicked = false;
+      state.checkValidation = false;
     },
     [addToCart.fulfilled]: (state, action) => {
       console.log(action);
       state.successMsg = action.payload.message;
       state.failureMsg = action.payload.validation[0];
 
-      state.cartCount += +action.payload.data.item.quantity;
+      if (action.payload.data !== null) {
+        state.cartItems.push(action.payload.data.item);
+      }
 
-      state.isAddClicked = true;
-    },
-    [addToCart.rejected]: (state, action) => {
-      console.log(action);
-      state.isAdd = true;
+      state.checkValidation = true;
     },
 
     [updateProductQuantity.pending]: (state, action) => {
-      console.log(action);
-
-      state.isAddClicked = false;
+      state.checkValidation = false;
     },
     [updateProductQuantity.fulfilled]: (state, action) => {
       console.log(action);
@@ -132,16 +182,34 @@ const productSlice = createSlice({
       state.successMsg = action.payload.message;
       state.failureMsg = action.payload.validation[0];
 
-      state.cartCount = +action.payload.data.item.quantity;
+      state.cartItems.find(
+        (item) => item.itemId === action.payload.data.item.itemId
+      ).amount = action.payload.data.item.amount;
 
-      state.isAddClicked = true;
+      state.checkValidation = true;
     },
-    [updateProductQuantity.rejected]: (state, action) => {
+
+    [removeProduct.pending]: (state, action) => {
+      state.checkValidation = false;
+    },
+    [removeProduct.fulfilled]: (state, action) => {
       console.log(action);
 
-      state.isAddClicked = true;
+      state.successMsg = action.payload.message;
+
+      state.checkValidation = true;
     },
   },
 });
+
+export const {
+  openCart,
+  CloseCart,
+  increaseQuantity,
+  decreaseQuantity,
+  deleteProduct,
+  getTotalQuantity,
+  getTotalPrice,
+} = productSlice.actions;
 
 export default productSlice.reducer;

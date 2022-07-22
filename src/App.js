@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navbar, Product, RelatedProducts, Footer } from "./components";
+import { Navbar, Product, RelatedProducts, Cart, Footer } from "./components";
 import { getProductDetails } from "./store/productSlice";
 
 import { SpinnerCircular } from "spinners-react";
@@ -30,6 +31,7 @@ function App() {
       ) : (
         <>
           <Navbar />
+          <Cart />
           <main>
             <Product />
             <hr className="my-[45px]" />

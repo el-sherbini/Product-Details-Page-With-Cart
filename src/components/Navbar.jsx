@@ -1,9 +1,23 @@
-import { useSelector } from "react-redux";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getTotalPrice,
+  getTotalQuantity,
+  openCart,
+} from "../store/productSlice";
 
 const Navbar = () => {
   const navbarItems = ["CATEGORIES", "Deals", "Recipes", "About"];
 
-  const { cartCount } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
+  const { cartCount, cartItems } = useSelector((state) => state.product);
+
+  useEffect(() => {
+    dispatch(getTotalQuantity());
+    dispatch(getTotalPrice());
+  }, [cartItems]);
 
   return (
     <nav className="flex h-[100px] w-full items-center bg-black text-white">
@@ -39,7 +53,12 @@ const Navbar = () => {
       <u className="mx-[10px]  ">34 Plaza Mall, Sheik...</u>
 
       <div className="relative mr-[40px]">
-        <img src="./assets/cart.svg" alt="search" />
+        <img
+          src="./assets/cart.svg"
+          alt="search"
+          onClick={() => dispatch(openCart())}
+          className="cursor-pointer"
+        />
         <span className="absolute top-[-10px] right-[-15px] h-[25px] w-[25px] rounded-full border-2 border-black bg-[#FF0000] text-center text-[14px]">
           {cartCount}
         </span>

@@ -1,7 +1,19 @@
-import { useState } from "react";
+import { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart, openCart } from "../store/productSlice";
 
 const ProductCard = ({ product }) => {
-  const [isDiscount] = useState(true);
+  const selectRef = useRef();
+
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({ productId: product.id, quantity: selectRef.current.value })
+    );
+
+    dispatch(openCart());
+  };
 
   return (
     <div className="card-shadow relative mb-[25px] mr-[25px] h-[450px] w-[230px] rounded-[10px]">
@@ -23,7 +35,10 @@ const ProductCard = ({ product }) => {
           className="my-[10px] h-[150px] w-[150px]"
         />
 
-        <select className="w-[80px] rounded-[20px] bg-[#F3D5E6] py-[7px] px-[12px] text-[16px] font-medium">
+        <select
+          ref={selectRef}
+          className="w-[80px] rounded-[20px] bg-[#F3D5E6] py-[7px] px-[12px] text-[16px] font-medium focus:outline-none"
+        >
           {product.quantities.map((quantity) => (
             <option key={quantity}>{quantity}</option>
           ))}
@@ -46,7 +61,9 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="absolute bottom-0 flex h-[60px] w-[230px] items-center justify-center rounded-[10px] bg-black text-white">
-          <button>Add to cart</button>
+          <button onClick={handleAddToCart} className="h-full w-full">
+            Add to cart
+          </button>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, updateProductQuantity } from "../store/productSlice";
+import { addToCart, openCart } from "../store/productSlice";
 
 import toast, { Toaster } from "react-hot-toast";
 
@@ -8,10 +9,11 @@ const Product = () => {
   const {
     productId,
     productName,
+    productPrice,
     productDescription,
     productImage,
     productQuantities,
-    isAddClicked,
+    checkValidation,
     successMsg,
     failureMsg,
   } = useSelector((state) => state.product);
@@ -24,20 +26,15 @@ const Product = () => {
       addToCart({ productId: productId, quantity: selectRef.current.value })
     );
 
-    // dispatch(
-    //   updateProductQuantity({
-    //     itemId: 158,
-    //     quantity: selectRef.current.value,
-    //   })
-    // );
+    dispatch(openCart());
   };
 
   useEffect(() => {
-    if (isAddClicked) {
+    if (checkValidation) {
       if (successMsg !== "Validation Error") toast.success(successMsg);
       else toast.error(failureMsg);
     }
-  }, [isAddClicked]);
+  }, [checkValidation]);
 
   return (
     <section className="mx-[150px] mt-[70px]">
@@ -65,7 +62,9 @@ const Product = () => {
                   {productName}
                 </h1>
 
-                <span className="text-[20px] font-semibold">9.99 LE</span>
+                <span className="text-[20px] font-semibold">
+                  {productPrice} LE
+                </span>
               </div>
 
               <p className="text-[15px]">
